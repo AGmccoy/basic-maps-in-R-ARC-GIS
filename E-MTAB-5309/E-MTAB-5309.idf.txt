@@ -1,0 +1,36 @@
+Comment[ArrayExpressAccession]	E-MTAB-5309
+MAGE-TAB Version	1.1					
+Investigation Title	RNA sequencing of the treatment of Aspergillus fumigatus with the new antifungal drug 089 -SYBARIS					
+Comment[Submitted Name]	RNA sequencing of the treatment of Aspergillus fumigatus with the new antifungal drug 089 -SYBARIS
+Experiment Description	The mechanism of action of the new antifungal compound 089 was identified in Saccharomyces cerevisiae. The compound had antifungal effects also on pathogenic fungi.  While on Candida species the treatment induced cells death, on A. fumigatus strains it inhibited the conidia transition to hyphae. We carried out RNA sequencing analysis to evaluate at the molecular level the effect of the treatment on Aspergillus.					
+Experimental Design	compound treatment design					
+Experimental Design Term Source REF	EFO					
+Experimental Design Term Accession Number	EFO_0001755					
+Experimental Factor Name	compound	dose				
+Experimental Factor Type	compound	dose				
+Experimental Factor Term Source REF		EFO				
+Experimental Factor Term Accession Number		EFO_0000428				
+Person Last Name	Stefanini					
+Person First Name	Irene					
+Person Mid Initials						
+Person Email	stefanini.irene@gmail.com					
+Person Phone						
+Person Fax						
+Person Address	Gibbet Hill Road Coventry CV4 7AL United Kingdom					
+Person Affiliation	Division of Biomedical Sciences Warwick Medical School University of Warwick					
+Person Roles	submitter					
+Public Release Date	2017-12-31					
+Protocol Name	P-MTAB-53013	P-MTAB-53014	P-MTAB-53015	P-MTAB-53016	P-MTAB-53017	P-MTAB-53018
+Protocol Type	growth protocol	nucleic acid extraction protocol	nucleic acid library construction protocol	nucleic acid sequencing protocol	high throughput sequence alignment protocol	normalization data transformation protocol
+Protocol Term Source REF	EFO	EFO	EFO	EFO	EFO	EFO
+Protocol Term Accession Number	EFO_0003789	EFO_0002944	EFO_0004184	EFO_0004170	EFO_0004917	EFO_0003816
+Protocol Description	A. fumigatus conidia were collected from solid Saboraud cultures using PBS+0.1% Tween, avoiding mycelium fragment and hyphae collection.  Conidia were then inoculated in RPMI 1640 medium + 2% glucose at 2.5x105 conidia/ml concentration supplemented with either 0.1mM 089 molecule or an equal volume of DMSO.  Cells were grown for 4 hours in static at 37C.	After 4 hours of growth in static at 37C, RNA was extracted from flash frozen samples by bead beating with Trizol.	For each sample, one paired-end mRNA library with approximately 150bp insert size was prepared using the TruSeq RNA Sample Preparation Kit v2 (Illumina).	Libraries were sequenced on Illumina HiSeq2000 lanes using 2x75 bp reads. The cluster generation kit was TruSeq PE Cluster Kit v3-cBot-HS, and the sequencing kit was TruSeq SBS Kit v3-HS. More than 40 million reads were generated for each sample.	 Alignment has been done by using tophat2 with the Aspergillus fumigatus A1160 reference genome sequence and annotation files downloaded from NCBI (download date: 4 Nov 2016). 	Raw reads were filtered and trimmed by using the IlluQC and TrimmingReads tools of the NGS QC Toolkit package, respectively. The filtering process was carried out with the default options. The trimming was carried out with mild thresholds, namely -q 5 -n 25.
+Protocol Hardware				Illumina HiSeq 2000		
+Protocol Software					tophat2	NGS QC Toolkit package
+Term Source Name	EFO
+Term Source File	http://www.ebi.ac.uk/efo/					
+Term Source Version						
+Comment[AEExperimentType]	RNA-seq of coding RNA					
+Comment[SequenceDataURI]	http://www.ebi.ac.uk/ena/data/view/ERR1748844-ERR1748849
+Comment[SecondaryAccession]	ERP020411
+SDRF File	E-MTAB-5309.sdrf.txt

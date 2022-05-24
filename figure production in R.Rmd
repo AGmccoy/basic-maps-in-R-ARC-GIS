@@ -1,0 +1,419 @@
+---
+title: "CIPS-Data Analysis Networking Group (DANG)"
+author: "Austin McCoy"
+date: "5/19/2022"
+output: 
+  html_document:
+    keep_md: yes # this saves all of your figures in a folder when you knit!!!
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This DANG workshop session will focus on data visualization relevant for Plant Pathologists using 'ggplot2', probably the most popular and widely used data visualization package in R. This workshop will assume you have some prior experience in R, particularly for the Maps section.
+
+The figures produced represent a good starting point, but are by no means the "end all be all" for these types of figures. For example, these static maps that we produce herein are great for Extension or Seminars, but with different packages (i.e. Leaflet) you can make JavaScript interactive and more informative maps for websites, lab notebooks, lab websites, etc.
+
+-----
+
+Figure Production in this workshop:
+
+1. Violin plots 
+
+2. Maps using Arc-GIS data (.shp files)
+  a. State/County Data overlayed onto maps
+  
+3. Heat maps (i.e. gene expression analysis)
+
+-----
+
+Some notes:
+
+* Lines 5,6, and 7 (In the .Rmd file) are setup so that upon knitting this .rmd document, a folder containing all figures produced will be saved in the directory of this R-Project
+
+* In each 'r chunk' header ('{r}') which contain figures, I have denoted "dpi=600" so that the figure produced will have a high DPI and not appear grainy when knitted. This is a quick, painless, way to print figures in high DPI from R markdown. If figures appear bunched on the x or y axis, you can also change the length and width of your high DPI figures in this same chunk header. Give it a try on the Maps section!
+
+* I have added themes to these figures so that they do not look so plain. Feel free to experiment with the theme variables and see what they do!
+
+
+-----
+
+
+Install the necessary packages
+```{r}
+#install.packages(tidyverse)
+#install.packages(sf)
+#install.packages(here)
+#install.packages(readxl)
+#install.packages(readr)
+#install.packages(cowplot)
+
+```
+
+
+loading in the necessary packages
+```{r, warning=FALSE}
+library(tidyverse) # loads in ggplot and a few other packages that are very useful for wrangling code/making figures
+library(sf) # "simple format", needed to work with maps/geometry objects
+library(here) # again, quality of life package
+library(readxl) # to read in excel based documents
+library(cowplot) # to bring multiple figures into a single, multi-pane, figure
+
+```
+
+-------
+
+# Violin Plots
+
+Violin plots are great for showing the distribution of your response variables data points for different treatments. Here I will show how to produce a violin plot containing individual data points, as well as a boxplot so we can visually compare treatments.I like to use these to visualize EC50 data from dose-response testing of oomycetes to fungicides.
+
+Lets take the fungicide data from [McCoy et al (2021)](https://github.com/AGmccoy/Phytophthora-sojae-pathotype-distribution-and-fungicide-sensitivity-in-Michigan), which tested four different oomicide compounds to a population of _Phytophthora sojae_ in Michigan and visualized it via violin plots.
+
+```{r, dpi=600, message=FALSE}
+psojae_fung <- read_excel("TEST.finaldata.set1set2set3.xlsx") # reading in the fungicide data
+
+ggplot(psojae_fung, aes(x=chemistry, y=abs.EC50.estimate, color=chemistry)) +
+  geom_violin(scale="width", size=0.1, position = position_dodge(width = 0.5), trim=FALSE) +
+  #geom_jitter(shape=16, size=0.01, position = position_jitter(0.1)) + 
+  geom_boxplot(width=0.1) + 
+  theme(axis.text.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.text.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.line.x = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    axis.line.y = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    legend.text = element_text(size = 10, face = "bold", family = "serif"),
+    legend.key = element_blank(),
+    legend.title = element_text(size = 10, face="bold", family = "serif"),
+    legend.position = "right",
+    strip.text.x = element_text(size = 15, face = "bold", family = "serif"),
+    title = element_text(size = 10, family = "serif")) +
+  labs(title="P. sojae fungicide sensitivity testing", x= "Oomicide", y="Absolute EC50 Estimate")
+
+```
+
+------
+
+# Maps using .shp (shapefiles) from Arc-GIS
+
+Here we will go over how to use ArC-GIS data to produced layered maps showing data we choose. In this case, we will make a map of the lower 48 United States showing the known range of _Phytophthora sojae_ and _Phytophthora sansomeana_. 
+
+We will then produce a county map of Michigan to show which counties were sampled in McCoy et al (2021), as well as locations for individual fields which were sampled when data was provided.
+
+Finally, we will plot "acres planted" by county for four row crops grown in Michigan: Corn, Wheat, Soy, and Oats. 
+
+[Information on Map making in ggplot2](https://ggplot2-book.org/maps.html)
+
+[USA map shapefile](https://www.census.gov/cgi-bin/geo/shapefiles/index.php)
+
+US map - _Phytophthora sansomeana_ and _P. sojae_ range (qualitative data)
+```{r, dpi=600, message=FALSE, warning=FALSE}
+usa <- here(
+  "tl_2021_us_state",
+  "tl_2021_us_state.shp"
+) %>%
+  st_read() # download the shapefiles for US states from the 'USA map shapefile' link above
+
+phy_sanso_range <- usa %>%
+  filter(NAME %in% c("Oregon", "New York"))
+
+phy_sojae_range <- usa %>%
+  filter(NAME %in% c("North Dakota", "South Dakota", "Missouri", "Arkansas", "Mississippi"))
+
+both_range <- usa %>%
+  filter(NAME %in% c("Nebraska", "Kansas", "Minnesota", "Iowa", "Wisconsin", "Illinois", "Indiana", "Michigan", "Ohio"))
+
+(usa_48 <- usa %>%
+  filter(!(NAME %in% c("Alaska", "District of Columbia", "Hawaii", "Puerto Rico", "United States Virgin Islands", "Commonwealth of the Northern Mariana Islands", "Guam", "American Samoa"))))
+
+sf_use_s2(FALSE)
+
+ggplot() +
+  geom_sf(data = usa_48) +
+  geom_sf(data = both_range, mapping = aes(fill="red")) +
+  geom_sf(data = phy_sanso_range, mapping = aes(fill="black")) +
+  geom_sf(data = phy_sojae_range, mapping = aes(fill="white")) +
+  coord_sf() +
+  scale_fill_identity(name = 'Species Reported', guide = 'legend', labels = c('P.sansomeana', 'Both', 'P.sojae')) +
+    theme(axis.text.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.text.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.line.x = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    axis.line.y = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    legend.text = element_text(size = 10, face = "bold", family = "serif"),
+    legend.key = element_blank(),
+    legend.title = element_text(size = 10, face="bold", family = "serif"),
+    legend.position = "right",
+    strip.text.x = element_text(size = 15, face = "bold", family = "serif"),
+    title = element_text(size = 10, family = "serif")) +
+     xlab("Longitude") + ylab("Latitude")+
+      ggtitle("Reported US range of Phytophthora sojae and P. sansomeana")
+
+```
+
+# Plotting data by county
+
+[Michigan shapefile](https://gis-michigan.opendata.arcgis.com/datasets/67a8ff23b5f54f15b7133b8c30981441/explore?location=44.706068%2C-86.594000%2C6.52)
+
+Michigan Map - presence of _P. sojae_ in MI by county from McCoy et al 2021 study with sampling locations as pins. 
+```{r, dpi=600, message=FALSE}
+MI_map <- here(
+  "MI_Counties_(v17a)",
+  "Counties_(v17a).shp"
+) %>%
+  st_read()
+
+county_sampled <- MI_map %>%
+  filter(NAME %in% c("Allegan", "Antrim", "Barry", "Bay", "Berrien", "Branch", "Cass", "Clare", "Clinton", "Gratiot", "Hillsdale", "Ingham", "Isabella", "Ionia", "Kalamazoo", "Kalkaska", "Kent", "Lapeer", "Lenawee", "Monroe", "Ottawa", "Saginaw", "Sanilac", "Shiawassee", "St. Joseph", "Tuscola", "Van Buren"))
+
+county_positive <- MI_map %>%
+  filter(NAME %in% c("Allegan", "Barry", "Berrien", "Branch", "Claire", "Gratiot", "Ionia", "Kalamazoo", "Lenawee", "Ottawa", "Saginaw", "Shiawassee"))
+
+ggplot() +
+  geom_sf(data = MI_map) +
+  geom_sf(data = county_sampled, mapping = aes(fill="white")) +
+  geom_sf(data = county_positive, mapping = aes(fill="green")) +
+  coord_sf() +
+  scale_fill_identity(name = 'Soil baiting', guide = 'legend', labels = c('Phytophthora sojae isolated', 'Phytophthora sojae not isolated')) +
+    theme(axis.text.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.text.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.line.x = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    axis.line.y = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    legend.text = element_text(size = 10, face = "bold", family = "serif"),
+    legend.key = element_blank(),
+    legend.title = element_text(size = 10, face="bold", family = "serif"),
+    legend.position = "right",
+    strip.text.x = element_text(size = 15, face = "bold", family = "serif"),
+    title = element_text(size = 10, family = "serif")) +
+     xlab("Longitude") + ylab("Latitude")+
+      ggtitle("McCoy et al 2021 soil sampling")
+  
+```
+
+
+
+Lets now add the exact location of fields that were sampled to this map
+```{r, dpi=600, message=FALSE, warning=FALSE}
+fields_sampled <- read_excel("gps coordinates for MI plot.xlsx", 
+    col_types = c("text", "text", "text", 
+        "numeric", "numeric", "text"))
+
+fields_sampled <- na.omit(fields_sampled) # removing missing GPS data points
+
+fields_sf <- st_as_sf(fields_sampled, coords = c("Longitude", "Latitude")) #changing to sf format so the coordinates will be accurately placed
+
+ggplot() +
+  geom_sf(data = MI_map) +
+  geom_sf(data = county_sampled, mapping = aes(fill="white")) +
+  geom_sf(data = county_positive, mapping = aes(fill="green")) +
+  geom_point(data = fields_sampled, aes(x=Longitude, y=Latitude), shape = 1) +
+  coord_sf() +
+  scale_fill_identity(name = 'Soil baiting', guide = 'legend', labels = c('Phytophthora sojae isolated', 'Phytophthora sojae not isolated')) +
+    theme(axis.text.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.text.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.line.x = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    axis.line.y = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    legend.text = element_text(size = 10, face = "bold", family = "serif"),
+    legend.key = element_blank(),
+    legend.title = element_text(size = 10, face="bold", family = "serif"),
+    legend.position = "right",
+    strip.text.x = element_text(size = 15, face = "bold", family = "serif"),
+    title = element_text(size = 10, family = "serif")) +
+     xlab("Longitude") + ylab("Latitude")+
+      ggtitle("McCoy et al 2021 soil sampling")
+
+```
+
+Lets plot some quantitative data on this Michigan plot now, just to show how we would do that.
+
+In this case we will use acres planted for corn, wheat, soybean, and oats data by county in Michigan. This data was retrieved from [USDA_NASS](https://www.nass.usda.gov/Statistics_by_State/Michigan/Publications/County_Estimates/index.php).
+
+Lets read in the 2021 data we downloaded from the links above
+```{r, message=FALSE}
+soybean <- read_csv("MI 2021 soybean county data.csv")
+
+corn <- read_csv("MI 2021 corn county data.csv")
+
+wheat <- read_csv("MI 2021 wheat county data.csv")
+
+oats <- read_csv("MI 2021 Oat county data.csv")
+
+```
+
+
+We will make four individual maps, each having data from a single crops acres planted overlayed on each county
+
+Lets start with soybeans
+```{r, dpi=600, message=FALSE}
+MI_map$NAME <- toupper(MI_map$NAME) # changing NAME variable to all uppercase, so we can 'left_join()' this data with USDA-NASS acres planted. To use 'left_join()' the variable must match exactly, even in case.
+
+soybean_map <- left_join(MI_map, soybean, by = c("NAME"="County")) # joining the map data and the acres planted data for soybean
+
+colnames(soybean_map)[35] <- "soybean acres planted" # original name for this column was very long. Here I am changing it so that it is easier to work with/plot.
+
+soybeans_planted <- ggplot() +
+  geom_sf(data = MI_map) +
+  geom_sf(data=soybean_map, mapping = aes(fill=`soybean acres planted`)) +
+  coord_sf() +
+    theme(axis.text.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.text.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.line.x = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    axis.line.y = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    legend.text = element_text(size = 10, face = "bold", family = "serif"),
+    legend.key = element_blank(),
+    legend.title = element_text(size = 10, face="bold", family = "serif"),
+    legend.position = "right",
+    strip.text.x = element_text(size = 15, face = "bold", family = "serif"),
+    title = element_text(size = 10, family = "serif")) +
+     xlab("Longitude") + ylab("Latitude") +
+      ggtitle("Soybean acres planted by Michigan County")
+
+soybeans_planted
+```
+
+
+Then Corn
+```{r, dpi=600, message=FALSE}
+corn_map <- left_join(MI_map, corn, by = c("NAME"="County")) # joining the map data and the acres planted data for corn
+
+colnames(corn_map)[33] <- "corn acres planted" # original name for this column was very long. Here I am changing it so that it is easier to work with/plot.
+
+corn_planted <- ggplot() +
+  geom_sf(data = MI_map) +
+  geom_sf(data=corn_map, mapping = aes(fill=`corn acres planted`)) +
+  coord_sf() +
+    theme(axis.text.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.text.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.line.x = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    axis.line.y = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    legend.text = element_text(size = 10, face = "bold", family = "serif"),
+    legend.key = element_blank(),
+    legend.title = element_text(size = 10, face="bold", family = "serif"),
+    legend.position = "right",
+    strip.text.x = element_text(size = 15, face = "bold", family = "serif"),
+    title = element_text(size = 10, family = "serif")) +
+     xlab("Longitude") + ylab("Latitude") +
+      ggtitle("Corn acres planted by Michigan County")
+
+corn_planted
+```
+
+
+followed by wheat
+```{r, dpi=600, message=FALSE}
+wheat_map <- left_join(MI_map, wheat, by = c("NAME"="County")) # joining the map data and the acres planted data for wheat
+
+colnames(wheat_map)[35] <- "wheat acres planted" # original name for this column was very long. Here I am changing it so that it is easier to work with/plot.
+
+wheat_planted <- ggplot() +
+  geom_sf(data = MI_map) +
+  geom_sf(data=wheat_map, mapping = aes(fill=`wheat acres planted`)) +
+  coord_sf() +
+    theme(axis.text.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.text.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.line.x = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    axis.line.y = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    legend.text = element_text(size = 10, face = "bold", family = "serif"),
+    legend.key = element_blank(),
+    legend.title = element_text(size = 10, face="bold", family = "serif"),
+    legend.position = "right",
+    strip.text.x = element_text(size = 15, face = "bold", family = "serif"),
+    title = element_text(size = 10, family = "serif")) +
+     xlab("Longitude") + ylab("Latitude") +
+      ggtitle("Wheat acres planted by Michigan County")
+
+wheat_planted
+```
+
+
+and lastly oats
+```{r, dpi=600, message=FALSE}
+oats_map <- left_join(MI_map, oats, by = c("NAME"="County")) # joining the map data and the acres planted data for oats
+
+colnames(oats_map)[35] <- "oats acres planted" # original name for this column was very long. Here I am changing it so that it is easier to work with/plot.
+
+oats_planted <- ggplot() +
+  geom_sf(data = MI_map) +
+  geom_sf(data=oats_map, mapping = aes(fill=`oats acres planted`)) +
+  coord_sf() +
+    theme(axis.text.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.text.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.line.x = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    axis.line.y = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    legend.text = element_text(size = 10, face = "bold", family = "serif"),
+    legend.key = element_blank(),
+    legend.title = element_text(size = 10, face="bold", family = "serif"),
+    legend.position = "right",
+    strip.text.x = element_text(size = 15, face = "bold", family = "serif"),
+    title = element_text(size = 10, family = "serif")) +
+     xlab("Longitude") + ylab("Latitude") +
+      ggtitle("Oats acres planted by Michigan County")
+
+oats_planted
+```
+
+
+
+lets put all of these figures together to give an idea of how many acres are planted in each Michigan county for these row crops. We will use 'cowplot' to put these four figures into a single, compound, figure.
+```{r, dpi=600, message=FALSE}
+MI_field_crops <- plot_grid(soybeans_planted,corn_planted,wheat_planted,oats_planted) # 'plot_grid()' allows us to take these saved figures and plot them in a grid at high DPI. Useful if you want to use a figure panel in a manuscript.
+
+MI_field_crops
+
+```
+
+-----
+
+# Heat maps for gene expression data
+
+Lets visualize _Aspergillus fumigatus_ gene expression change between a fungicide "Compound 089" and "DMSO" treatments. This will be a, relatively, very small heatmap as there is only comparison between a single control and a single treatment. With more treatments the columns of the heatmap will increase.
+
+Having data in "long" format will be needed to plot the gene expression data with ggpplot.
+
+[data from](https://www.ebi.ac.uk/gxa/experiments/E-MTAB-5309/Results)
+
+```{r, dpi=600, message=FALSE}
+Afumigatus_gene_expression <- read_delim("E-MTAB-5309/E-MTAB-5309-analytics.tsv", 
+    delim = "\t", escape_double = FALSE, 
+    trim_ws = TRUE)
+
+Afumigatus_gene_expression$comparison <- c("comp089_DMSO") # adding a column to detail how the change in expression was calculated
+
+Afumigatus_gene_expression_rs <- Afumigatus_gene_expression[sample(nrow(Afumigatus_gene_expression), 25), ] # too many genes for this example. so here we are randomly sampling 25 genes and their expression relative to the control "DMSO"
+
+afum_25gene <- ggplot(Afumigatus_gene_expression_rs, aes(x=comparison,y=`Gene ID`, fill=g2_g1.log2foldchange)) +
+  geom_tile() +
+  theme(axis.text.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.text.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.x = element_text(size = 10, face = "bold", family = "serif"),
+    axis.title.y = element_text(size = 10, face = "bold", family = "serif"),
+    axis.line.x = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    axis.line.y = element_line(colour = 'gray', size=0.5, linetype='solid'),
+    legend.text = element_text(size = 10, face = "bold", family = "serif"),
+    legend.key = element_blank(),
+    legend.title = element_text(size = 10, face="bold", family = "serif"),
+    legend.position = "right",
+    strip.text.x = element_text(size = 15, face = "bold", family = "serif"),
+    title = element_text(size = 10, family = "serif")) +
+  xlab("Comparison") + ylab("Gene ID") +
+      ggtitle("A. fumigatus gene expression")
+
+afum_25gene
+
+```
+
+-----

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration experimentType="rnaseq_mrna_differential" r_data="1">
+    <analytics>
+        <assay_groups>
+            <assay_group id="g1" label="089; 0.1 millimolar">
+                <assay>ERR1748845</assay>
+                <assay>ERR1748844</assay>
+                <assay>ERR1748846</assay>
+            </assay_group>
+            <assay_group id="g2" label="DMSO">
+                <assay>ERR1748849</assay>
+                <assay>ERR1748848</assay>
+                <assay>ERR1748847</assay>
+            </assay_group>
+        </assay_groups>
+        <contrasts>
+            <contrast id="g2_g1" cttv_primary="0">
+                <name>'compound 089; 0.1 millimolar' vs 'DMSO'</name>
+                <reference_assay_group>g2</reference_assay_group>
+                <test_assay_group>g1</test_assay_group>
+            </contrast>
+        </contrasts>
+    </analytics>
+</configuration>

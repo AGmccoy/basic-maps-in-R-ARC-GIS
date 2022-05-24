@@ -1,0 +1,27 @@
+E-MTAB-5309		ERR1748844	characteristic	cell type	conidium	http://purl.obolibrary.org/obo/CL_0000599
+E-MTAB-5309		ERR1748844	characteristic	organism	Aspergillus fumigatus	http://purl.obolibrary.org/obo/NCBITaxon_746128
+E-MTAB-5309		ERR1748844	characteristic	strain	A1160
+E-MTAB-5309		ERR1748844	factor	compound	089
+E-MTAB-5309		ERR1748844	factor	dose	0.1 millimolar
+E-MTAB-5309		ERR1748845	characteristic	cell type	conidium	http://purl.obolibrary.org/obo/CL_0000599
+E-MTAB-5309		ERR1748845	characteristic	organism	Aspergillus fumigatus	http://purl.obolibrary.org/obo/NCBITaxon_746128
+E-MTAB-5309		ERR1748845	characteristic	strain	A1160
+E-MTAB-5309		ERR1748845	factor	compound	089
+E-MTAB-5309		ERR1748845	factor	dose	0.1 millimolar
+E-MTAB-5309		ERR1748846	characteristic	cell type	conidium	http://purl.obolibrary.org/obo/CL_0000599
+E-MTAB-5309		ERR1748846	characteristic	organism	Aspergillus fumigatus	http://purl.obolibrary.org/obo/NCBITaxon_746128
+E-MTAB-5309		ERR1748846	characteristic	strain	A1160
+E-MTAB-5309		ERR1748846	factor	compound	089
+E-MTAB-5309		ERR1748846	factor	dose	0.1 millimolar
+E-MTAB-5309		ERR1748847	characteristic	cell type	conidium	http://purl.obolibrary.org/obo/CL_0000599
+E-MTAB-5309		ERR1748847	characteristic	organism	Aspergillus fumigatus	http://purl.obolibrary.org/obo/NCBITaxon_746128
+E-MTAB-5309		ERR1748847	characteristic	strain	A1160
+E-MTAB-5309		ERR1748847	factor	compound	DMSO	http://purl.obolibrary.org/obo/CHEBI_28262
+E-MTAB-5309		ERR1748848	characteristic	cell type	conidium	http://purl.obolibrary.org/obo/CL_0000599
+E-MTAB-5309		ERR1748848	characteristic	organism	Aspergillus fumigatus	http://purl.obolibrary.org/obo/NCBITaxon_746128
+E-MTAB-5309		ERR1748848	characteristic	strain	A1160
+E-MTAB-5309		ERR1748848	factor	compound	DMSO	http://purl.obolibrary.org/obo/CHEBI_28262
+E-MTAB-5309		ERR1748849	characteristic	cell type	conidium	http://purl.obolibrary.org/obo/CL_0000599
+E-MTAB-5309		ERR1748849	characteristic	organism	Aspergillus fumigatus	http://purl.obolibrary.org/obo/NCBITaxon_746128
+E-MTAB-5309		ERR1748849	characteristic	strain	A1160
+E-MTAB-5309		ERR1748849	factor	compound	DMSO	http://purl.obolibrary.org/obo/CHEBI_28262
