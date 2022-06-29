@@ -140,7 +140,7 @@ ggplot(psojae_fung, aes(x=chemistry, y=abs.EC50.estimate, color=chemistry)) +
 
     ## Warning: Removed 1 rows containing non-finite values (stat_boxplot).
 
-![](figure-production-in-R_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![unnamed-chunk-3-1](https://user-images.githubusercontent.com/46008155/176497511-a7293ef2-bcdd-4730-9835-ed898e63f302.png)
 
 ------------------------------------------------------------------------
 
@@ -268,7 +268,7 @@ ggplot() +
       ggtitle("Reported US range of Phytophthora sojae and P. sansomeana")
 ```
 
-![](figure-production-in-R_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![unnamed-chunk-4-1](https://user-images.githubusercontent.com/46008155/176497641-d5fe63e7-aa32-403d-becf-825bc95ae8e8.png)
 
 # Plotting data by county
 
@@ -324,7 +324,9 @@ ggplot() +
       ggtitle("McCoy et al 2021 soil sampling")
 ```
 
-![](figure-production-in-R_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![unnamed-chunk-5-1](https://user-images.githubusercontent.com/46008155/176497700-2685be0c-6cdc-42c2-af1d-6435c349fe4a.png)
+
+
 
 Lets now add the exact location of fields that were sampled to this map
 
@@ -360,7 +362,8 @@ ggplot() +
       ggtitle("McCoy et al 2021 soil sampling")
 ```
 
-![](figure-production-in-R_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![unnamed-chunk-6-1](https://user-images.githubusercontent.com/46008155/176497775-da464144-eee1-42ed-871f-d429f0534a1d.png)
+
 
 Lets plot some quantitative data on this Michigan plot now, just to show
 how we would do that.
@@ -415,7 +418,7 @@ soybeans_planted <- ggplot() +
 soybeans_planted
 ```
 
-![](figure-production-in-R_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![unnamed-chunk-7-1](https://user-images.githubusercontent.com/46008155/176497898-690ada1d-569e-4f4a-bce7-ebc97f5113d7.png)
 
 Then Corn
 
@@ -446,7 +449,7 @@ corn_planted <- ggplot() +
 corn_planted
 ```
 
-![](figure-production-in-R_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![unnamed-chunk-9-1](https://user-images.githubusercontent.com/46008155/176497981-438abb39-4dbd-4d49-8e89-64983cb63707.png)
 
 followed by wheat
 
@@ -477,7 +480,7 @@ wheat_planted <- ggplot() +
 wheat_planted
 ```
 
-![](figure-production-in-R_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![unnamed-chunk-10-1](https://user-images.githubusercontent.com/46008155/176498029-7437b24b-874e-44ac-946b-5a00fcd82bdf.png)
 
 and lastly oats
 
@@ -508,7 +511,7 @@ oats_planted <- ggplot() +
 oats_planted
 ```
 
-![](figure-production-in-R_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![unnamed-chunk-11-1](https://user-images.githubusercontent.com/46008155/176498061-8b37feb2-33fb-4630-b429-7da269a29c02.png)
 
 lets put all of these figures together to give an idea of how many acres
 are planted in each Michigan county for these row crops. We will use
@@ -520,7 +523,7 @@ MI_field_crops <- plot_grid(soybeans_planted,corn_planted,wheat_planted,oats_pla
 MI_field_crops
 ```
 
-![](figure-production-in-R_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![unnamed-chunk-12-1](https://user-images.githubusercontent.com/46008155/176498097-81bc812b-ca54-4221-a245-17e27801788c.png)
 
 ------------------------------------------------------------------------
 
@@ -566,6 +569,6 @@ afum_25gene <- ggplot(Afumigatus_gene_expression_rs, aes(x=comparison,y=`Gene ID
 afum_25gene
 ```
 
-![](figure-production-in-R_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![unnamed-chunk-13-1](https://user-images.githubusercontent.com/46008155/176498146-104ea4bf-7a04-406d-bc81-3634ff09aa7b.png)
 
 ------------------------------------------------------------------------
